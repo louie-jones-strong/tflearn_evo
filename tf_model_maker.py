@@ -1,7 +1,7 @@
 import tflearn
 import numpy as np
 
-def accuracy_cal( inputs , targets , model , batch_size , decimal_places = 1):
+def accuracy_cal( inputs , targets , model , batch_size , decimal_places=1):
     outputs = run_inputs( inputs , model , batch_size)
     outputs = np.around( outputs , decimals = decimal_places )
 
@@ -13,7 +13,18 @@ def accuracy_cal( inputs , targets , model , batch_size , decimal_places = 1):
 
     return fitness
 
-def run_inputs( inputs , model , batch_size):
+def error_cal( inputs , targets , model , batch_size ):
+
+    outputs = run_inputs( inputs , model , batch_size )
+
+    error = 0
+    for loop in range(len(inputs)):
+        for loop2 in range(len(targets[0])):
+            error += 0.5 * ( ( targets[loop][loop2] - outputs[loop][loop2] ) ** 2 )
+
+    return error
+
+def run_inputs( inputs , model , batch_size ):
 
     small = 0
     large = len(inputs)%batch_size
@@ -29,6 +40,16 @@ def run_inputs( inputs , model , batch_size):
         temp = model.predict(temp).tolist()
         outputs = outputs + temp
     return outputs
+
+def rnn_network_runner( input , model , batch_size , num_to_run ):
+
+    for loop in range(num_to_run):
+        output = run_inputs( input , model , batch_size)
+
+        #turns output array into sequence input
+        input = [list(map(lambda x: [x],output[0]))]
+        input = np.asarray(input)
+    return #code needs finishing
 
 def model_maker( input_shape , structre_array , batch_size=20 , lr=0.01 , tensorboard_level=0 , checkpoint_on=False , checkpoint_num=1 , optimizer="adam" ):
     tflearn.config.init_graph (gpu_memory_fraction=0.95, soft_placement=True)
@@ -64,7 +85,7 @@ def model_maker( input_shape , structre_array , batch_size=20 , lr=0.01 , tensor
 
     return model , model_ID
 
-def layers(network,structre_array,model_ID,layer_number = 0):
+def layers( network , structre_array , model_ID , layer_number=0 ):
     layer_name = "layer_" + str(layer_number)
 
     if structre_array[0][0] == "conv":
@@ -99,7 +120,7 @@ def layers(network,structre_array,model_ID,layer_number = 0):
 
     return network , model_ID
 
-def train(X , Y , testX , testY , epochs , model , batch_size , run_ID="ID" , metrics_on=False , checkpoints_on=False):
+def train( X , Y , testX , testY , epochs , model , batch_size , run_ID="ID" , metrics_on=False , checkpoints_on=False):
     
     try:
         model.fit( X , Y , n_epoch=epochs , validation_set=( testX , testY ) , show_metric=metrics_on , snapshot_epoch=checkpoints_on , run_id=run_ID )
@@ -107,7 +128,7 @@ def train(X , Y , testX , testY , epochs , model , batch_size , run_ID="ID" , me
         print("batch size to big!!")
         print("batch size changed from: " + str(batch_size) + " to: " + str(int(batch_size*0.9)) )
         batch_size = int(batch_size*0.9)
-        model , batch_size = train( address , X , Y , testX , testY , epochs , model , batch_size , run_ID)
+        model , batch_size = train( X , Y , testX , testY , epochs , model , batch_size , run_ID)
 
     return model , batch_size
 

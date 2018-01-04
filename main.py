@@ -2,7 +2,7 @@ import tflearn
 import numpy as np
 import os
 import time
-from tf_model_maker import model_maker , accuracy_cal , run_inputs , train, get_weights , set_weights
+from tf_model_maker import model_maker , accuracy_cal , run_inputs , train , get_weights , set_weights , error_cal
 from common_code import tag_edit , folder_picker , sound_setup , play_sound
 
 class main(object):
@@ -152,6 +152,9 @@ class main(object):
         run_ID = dataset_name + "." + model_ID
         os.system("cls") 
 
+
+
+
         total_epochs = 0
         while True:
             play_sound()
@@ -160,9 +163,9 @@ class main(object):
 
 
             model , batch_size = train(train_inputs , train_targets, test_inputs , test_targets , epochs ,model , batch_size , run_ID, metrics_on=metrics_on , checkpoints_on=checkpoints_on)
-            self.save_graph(model , batch_size , inputs , targets , total_epochs)
             #fittness = accuracy_cal( train_inputs , train_targets , model , batch_size , decimal_places = 1)
             #print("accuracy: " + str(fittness) + "/" + str(len(train_inputs)))
+            print(error_cal( inputs , targets , model , batch_size ))
         return
 
 main = main()
