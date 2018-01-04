@@ -151,4 +151,4 @@ def set_weights( model , number_of_layers , new_weights ):
         with model.session.as_default():
             tflearn.variables.set_value(temp[0],new_weights[loop][0])
             tflearn.variables.set_value(temp[1],new_weights[loop][1])
-    return
+    return model

@@ -4,6 +4,7 @@ import os
 import time
 from tf_model_maker import model_maker , accuracy_cal , run_inputs , train , get_weights , set_weights , error_cal
 from common_code import tag_edit , folder_picker , sound_setup , play_sound
+from evo import *
 
 class main(object):
  
@@ -140,6 +141,7 @@ class main(object):
         
         address_dataset = "info\\data-sets\\example dataset\\"
     
+        num_networks = 10
         dataset_name = "dataset"
     
         inputs , targets , input_shape , output_shape , structre_array , batch_size = self.load_data_set(address_dataset)
@@ -152,20 +154,26 @@ class main(object):
         run_ID = dataset_name + "." + model_ID
         os.system("cls") 
 
-
+        weights = get_weights( model , len(structre_array) )
+        network_weights = split( weights , num_networks )
 
 
         total_epochs = 0
         while True:
-            play_sound()
-            epochs = int(input("number of epochs: "))
-            total_epochs += epochs
+            errors = []
 
+            for loop in range(num_networks):#loop through each network models
+                model = set_weights( model , len(structre_array) , network_weights[loop] )
+                errors += [error_cal( inputs , targets , model , batch_size )]
 
-            model , batch_size = train(train_inputs , train_targets, test_inputs , test_targets , epochs ,model , batch_size , run_ID, metrics_on=metrics_on , checkpoints_on=checkpoints_on)
-            #fittness = accuracy_cal( train_inputs , train_targets , model , batch_size , decimal_places = 1)
-            #print("accuracy: " + str(fittness) + "/" + str(len(train_inputs)))
-            print(error_cal( inputs , targets , model , batch_size ))
+            fitness = fitness_cal(errors)
+            print(errors)
+            print(fitness)
+            fitness , network_weights = kill(fitness,network_weights)
+            print(fitness)
+            network_weights = breed(fitness,network_weights)
+            input()
+            total_epochs += 1
         return
 
 main = main()
