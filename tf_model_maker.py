@@ -64,37 +64,38 @@ def model_maker( input_shape , structre_array , batch_size=20 , lr=0.01 , tensor
 
     return model , model_ID
 
-def layers(network,structre_array,model_ID):
+def layers(network,structre_array,model_ID,layer_number = 0):
+    layer_name = "layer_" + str(layer_number)
 
     if structre_array[0][0] == "conv":
-        network = tflearn.conv_2d(network, structre_array[0][1], 3, activation=structre_array[0][2], regularizer="L2")
+        network = tflearn.conv_2d(network, structre_array[0][1], 3, activation=structre_array[0][2], regularizer="L2", name=layer_name)
         model_ID += "c"+str(structre_array[0][1])+"."
 
     elif structre_array[0][0] == "ann":
-        network = tflearn.fully_connected(network, structre_array[0][1] , activation=structre_array[0][2],bias = True,bias_init = "Normal")
+        network = tflearn.fully_connected(network, structre_array[0][1] , activation=structre_array[0][2],bias = True,bias_init = "Normal", name=layer_name)
         model_ID += "a"+str(structre_array[0][1])+"."
         if len(structre_array) > 1 and structre_array[0][3] == "True":
             network = tflearn.dropout(network, 0.8)
 
     elif structre_array[0][0] == "maxpool":
-        network = tflearn.max_pool_2d(network, structre_array[0][1])
+        network = tflearn.max_pool_2d(network, structre_array[0][1], name=layer_name)
         model_ID += "m"+str(structre_array[0][1])+"."
 
     elif structre_array[0][0] == "rnn":
-        network = tflearn.simple_rnn(network, structre_array[0][1] , activation=structre_array[0][2],bias = True)
+        network = tflearn.simple_rnn(network, structre_array[0][1] , activation=structre_array[0][2],bias = True, name=layer_name)
         model_ID += "r"+str(structre_array[0][1])+"."
 
     elif  structre_array[0][0] == "lstm":
         if len(structre_array) > 2 and structre_array[0][3] == "True":
-            network = tflearn.lstm(network, structre_array[0][1], activation=structre_array[0][2] , dropout=0.8 , return_seq=True)
+            network = tflearn.lstm(network, structre_array[0][1], activation=structre_array[0][2] , dropout=0.8 , return_seq=True, name=layer_name)
         else:
-            network = tflearn.lstm(network, structre_array[0][1], activation=structre_array[0][2] , return_seq=False)
+            network = tflearn.lstm(network, structre_array[0][1], activation=structre_array[0][2] , return_seq=False, name=layer_name)
         model_ID += "l"+str(structre_array[0][1])+"."
 
 
 
     if len(structre_array) > 1:
-        network , model_ID = layers(network,structre_array[1:],model_ID)
+        network , model_ID = layers(network,structre_array[1:],model_ID,layer_number = layer_number+1)
 
     return network , model_ID
 
@@ -109,3 +110,24 @@ def train(X , Y , testX , testY , epochs , model , batch_size , run_ID="ID" , me
         model , batch_size = train( address , X , Y , testX , testY , epochs , model , batch_size , run_ID)
 
     return model , batch_size
+
+def get_weights( model , number_of_layers ):
+    weights_value = []
+
+    for loop in range(number_of_layers):
+        temp = tflearn.variables.get_layer_variables_by_name("layer_"+str(loop))
+        with model.session.as_default():
+            temp[0] = tflearn.variables.get_value(temp[0])
+            temp[1] = tflearn.variables.get_value(temp[1])
+            weights_value += [temp]
+
+    return weights_value
+
+def set_weights( model , number_of_layers , new_weights ):
+
+    for loop in range(number_of_layers):
+        temp = tflearn.variables.get_layer_variables_by_name("layer_"+str(loop))
+        with model.session.as_default():
+            tflearn.variables.set_value(temp[0],new_weights[loop][0])
+            tflearn.variables.set_value(temp[1],new_weights[loop][1])
+    return

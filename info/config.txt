@@ -1,0 +1,6 @@
+training percentage = 80
+available vram(in GB) = 2
+sound_on = True
+output metric = True
+checkpoints = True
+checkpoint_num = 1

@@ -2,7 +2,7 @@ import tflearn
 import numpy as np
 import os
 import time
-from tf_model_maker import model_maker , accuracy_cal , run_inputs , train
+from tf_model_maker import model_maker , accuracy_cal , run_inputs , train, get_weights , set_weights
 from common_code import tag_edit , folder_picker , sound_setup , play_sound
 
 class main(object):
@@ -138,7 +138,7 @@ class main(object):
     def main(self):
         address , split_percentage , sound_on , metrics_on , checkpoints_on , checkpoint_num = self.setup()
         
-        address_dataset = "info\\dataset\\dataset0.25\\"
+        address_dataset = "info\\data-sets\\example dataset\\"
     
         dataset_name = "dataset"
     
@@ -150,8 +150,8 @@ class main(object):
 
         model , model_ID = model_maker( input_shape , structre_array , batch_size=batch_size , lr = 0.001 , tensorboard_level = 0, checkpoint_on=checkpoints_on , checkpoint_num=checkpoint_num)
         run_ID = dataset_name + "." + model_ID
-        os.system("cls")  
-        self.save_graph(model , batch_size , inputs , targets , 0)
+        os.system("cls") 
+
         total_epochs = 0
         while True:
             play_sound()
