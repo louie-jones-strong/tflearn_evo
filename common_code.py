@@ -6,21 +6,26 @@ def tag_edit( tag , line , type="str" ):
     temp = str(line[lenght_of_tag:])
     if type == "str":
         text_on_line = str(temp)
+
     elif type == "int":
         text_on_line = int(temp)
+
     elif type == "float":
         text_on_line = float(temp)
+
     elif type == "bool":
         if temp == "True" or temp == "True\n":
             text_on_line = True
+
         elif temp == "False" or temp == "False\n":
             text_on_line = False
+
         else:
             text_on_line = bool(int(temp))
 
     return text_on_line
 
-def folder_picker(address, auto_picked = None):
+def folder_picker( address, auto_picked=None ):
     temp = os.listdir(address)
 
     if auto_picked == None:

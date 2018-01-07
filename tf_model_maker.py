@@ -1,7 +1,7 @@
 import tflearn
 import numpy as np
 
-def accuracy_cal( inputs , targets , model , batch_size , decimal_places=1):
+def accuracy_cal( inputs , targets , model , batch_size , decimal_places=1 ):
     outputs = run_inputs( inputs , model , batch_size)
     outputs = np.around( outputs , decimals = decimal_places )
 
@@ -32,13 +32,13 @@ def run_inputs( inputs , model , batch_size ):
     outputs = model.predict(temp).tolist()
 
 
-    for loop in range(0,int(len(inputs)/batch_size)):
+    for loop in range( 0 , int(len(inputs)/batch_size) ):
         small = large
         large += batch_size
         temp = inputs[ small : large ]
 
         temp = model.predict(temp).tolist()
-        outputs = outputs + temp
+        outputs += temp
     return outputs
 
 def rnn_network_runner( input , model , batch_size , num_to_run ):
@@ -58,10 +58,13 @@ def model_maker( input_shape , structre_array , batch_size=20 , lr=0.01 , tensor
     #makes the input layer
     if len(input_shape) == 1:
         network = tflearn.input_data(shape=[None, input_shape[0] ], name='input')
+
     elif len(input_shape) == 2:
         network = tflearn.input_data(shape=[None, input_shape[0] , input_shape[1] ], name='input')
+
     elif len(input_shape) == 3:
         network = tflearn.input_data(shape=[None, input_shape[0] , input_shape[1] , input_shape[2] ], name='input')
+
     else:
         network = tflearn.input_data(shape=[None, input_shape[0] , input_shape[1] , input_shape[2] , input_shape[3] ], name='input')
 
@@ -71,7 +74,7 @@ def model_maker( input_shape , structre_array , batch_size=20 , lr=0.01 , tensor
     #to pick the optimizer to use to learn the task
     if optimizer == "adam":
         model_ID += "adam"
-        network = tflearn.regression(network, optimizer='adam', learning_rate = lr ,batch_size = batch_size,loss='mean_square', name='target')
+        network = tflearn.regression( network , optimizer='adam' , learning_rate=lr , batch_size = batch_size , loss='mean_square' , name='target' )
 
     else:
         model_ID += "sgd"
@@ -79,9 +82,9 @@ def model_maker( input_shape , structre_array , batch_size=20 , lr=0.01 , tensor
         network = tflearn.regression(network, optimizer=sgd, learning_rate = lr ,batch_size = batch_size,loss='mean_square', name='target')
     
     if checkpoint_on:
-        model = tflearn.DNN(network, tensorboard_verbose=tensorboard_level , tensorboard_dir='log')
+        model = tflearn.DNN( network , tensorboard_verbose=tensorboard_level , tensorboard_dir='log')
     else:
-        model = tflearn.DNN(network, tensorboard_verbose=tensorboard_level, checkpoint_path='tflearn\\model.tfl',max_checkpoints=checkpoint_num, tensorboard_dir='log')
+        model = tflearn.DNN( network , tensorboard_verbose=tensorboard_level , checkpoint_path='tflearn\\model.tfl' , max_checkpoints=checkpoint_num , tensorboard_dir='log' )
 
     return model , model_ID
 
@@ -120,7 +123,7 @@ def layers( network , structre_array , model_ID , layer_number=0 ):
 
     return network , model_ID
 
-def train( X , Y , testX , testY , epochs , model , batch_size , run_ID="ID" , metrics_on=False , checkpoints_on=False):
+def train( X , Y , testX , testY , epochs , model , batch_size , run_ID="ID" , metrics_on=False , checkpoints_on=False ):
     
     try:
         model.fit( X , Y , n_epoch=epochs , validation_set=( testX , testY ) , show_metric=metrics_on , snapshot_epoch=checkpoints_on , run_id=run_ID )

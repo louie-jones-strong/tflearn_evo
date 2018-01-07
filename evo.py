@@ -2,7 +2,7 @@ import random
 import numpy as np
 
 
-def split(old_weights,new_size):
+def split( old_weights , new_size ):
     new_weights = []
     for loop in range(new_size-1):
         new_weights += [old_weights]
@@ -19,14 +19,14 @@ def mutation( weights , mutation_rate , mutation_amount ):
         if mutation_rate >= random.randint(0,100)/100:
 
             amount = random.randint(-15000,15000)/10000
-            weights = weights * amount
+            weights = weights + amount
     else:
         weights = list(map(lambda x: mutation(x,mutation_rate,mutation_amount) , weights ))
 
 
     return weights # adding mutation_amount
 
-def fitness_cal(error):
+def fitness_cal( error ):
 
     if np.amin(error) < 0:
         selection_chance = error + (np.abs(np.amin(error)))+1
@@ -41,13 +41,13 @@ def fitness_cal(error):
 
     return selection_chance
 
-def kill(selection_chance,old_weights):
+def kill( selection_chance , old_weights ):
 
     new_weights = []
     new_selection_chance = []
-    temp_array = list(range(len(old_weights)))
+    temp_array = list( range(len(old_weights)) )
 
-    for loop in range(int(len(old_weights)/2)):
+    for loop in range( int( len(old_weights)/2 ) ):
         temp = np.random.choice(temp_array, p = selection_chance)
         new_weights += [old_weights[temp]]
         new_selection_chance += [selection_chance[temp]]
@@ -61,8 +61,8 @@ def breed( selection_chance , old_weights ):
     new_weights = old_weights
 
     for loop in range(len(old_weights)):
-        temp  = np.random.choice(temp_array, p = selection_chance)
-        temp2 = np.random.choice(temp_array, p = selection_chance)
+        temp  = np.random.choice( temp_array , p=selection_chance )
+        temp2 = np.random.choice( temp_array , p=selection_chance )
 
 
         DNA_1 = old_weights[temp]
@@ -73,11 +73,11 @@ def breed( selection_chance , old_weights ):
         
         new_DNA = DNA_1
         # pick elemnt one by one from each
-        for loop2 in range(len(DNA_1)):
-            for loop3 in range(len(DNA_1[loop2])):
-                for loop4 in range(len(DNA_1[loop2][loop3])):
+        for loop2 in range( len( DNA_1 ) ):
+            for loop3 in range( len( DNA_1[loop2] ) ):
+                for loop4 in range( len( DNA_1[loop2][loop3] ) ):
 
-                    temp  = np.random.choice([0,1], p = temp_chance)
+                    temp  = np.random.choice( [0,1] , p=temp_chance )
                     if temp == 0:
                         new_DNA[loop2][loop3][loop4] = DNA_1[loop2][loop3][loop4]
                     else:
@@ -85,4 +85,4 @@ def breed( selection_chance , old_weights ):
 
         
         new_weights += [mutation(new_DNA,0.8,1)]
-    return new_weights
+    return new_weights #remake
