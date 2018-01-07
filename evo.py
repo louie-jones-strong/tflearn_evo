@@ -1,32 +1,28 @@
 import random
 import numpy as np
 
-
 def split(old_weights,new_size):
     new_weights = []
-    for loop in range(new_size):
-        new_weights += [mutation(old_weights,1,1)]
+    for loop in range(new_size-1):
+        new_weights += [old_weights]
 
+    new_weights = mutation(new_weights,1,1)
+
+    new_weights += [old_weights]
     return new_weights
 
-def mutation(old_weights,mutation_rate,mutation_amount):
+def mutation( weights , mutation_rate , mutation_amount ):
+    if type(weights) is np.float32 or type(weights) is int or type(weights) is float or type(weights) is np.float64:
 
-    new_weights = old_weights
+        if mutation_rate >= random.randint(0,100)/100:
 
-    for loop in range(len(old_weights)):
-        for loop2 in range(len(old_weights[loop])):
-            for loop3 in range(len(old_weights[loop][loop2])):
+            amount = random.randint(-15000,15000)/10000
+            weights = weights * amount
+    else:
+        weights = list(map(lambda x: mutation(x,mutation_rate,mutation_amount) , weights ))
 
-                #how much to mutation
-                if mutation_rate >= random.randint(0,100):
-                    mutation_amount = random.randint(-1500,1500)/1000
-                else:
-                    mutation_amount = 1
 
-                #mutation
-                new_weights[loop][loop2][loop3] = new_weights[loop][loop2][loop3] * mutation_amount
-
-    return new_weights # needs improving adding mutation_amount
+    return weights # adding mutation_amount
 
 def fitness_cal(error):
 
@@ -63,9 +59,6 @@ def breed( selection_chance , old_weights ):
     temp_array = list(range( len(old_weights) ))
     new_weights = old_weights
 
-    print(len(selection_chance))
-    print(len(old_weights))
-
     for loop in range(len(old_weights)):
         temp  = np.random.choice(temp_array, p = selection_chance)
         temp2 = np.random.choice(temp_array, p = selection_chance)
@@ -90,5 +83,5 @@ def breed( selection_chance , old_weights ):
                         new_DNA[loop2][loop3][loop4] = DNA_2[loop2][loop3][loop4]
 
         
-        new_weights += mutation(new_DNA,0.5,1)
+        new_weights += [mutation(new_DNA,0.8,1)]
     return new_weights

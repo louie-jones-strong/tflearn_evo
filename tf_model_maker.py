@@ -149,6 +149,7 @@ def set_weights( model , number_of_layers , new_weights ):
     for loop in range(number_of_layers):
         temp = tflearn.variables.get_layer_variables_by_name("layer_"+str(loop))
         with model.session.as_default():
+
             tflearn.variables.set_value(temp[0],new_weights[loop][0])
             tflearn.variables.set_value(temp[1],new_weights[loop][1])
     return model

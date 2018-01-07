@@ -141,7 +141,7 @@ class main(object):
         
         address_dataset = "info\\data-sets\\example dataset\\"
     
-        num_networks = 10
+        num_networks = 20
         dataset_name = "dataset"
     
         inputs , targets , input_shape , output_shape , structre_array , batch_size = self.load_data_set(address_dataset)
@@ -155,25 +155,23 @@ class main(object):
         os.system("cls") 
 
         weights = get_weights( model , len(structre_array) )
-        network_weights = split( weights , num_networks )
 
+        network_weights = split( weights , num_networks )
 
         total_epochs = 0
         while True:
             errors = []
-
             for loop in range(num_networks):#loop through each network models
                 model = set_weights( model , len(structre_array) , network_weights[loop] )
-                errors += [error_cal( inputs , targets , model , batch_size )]
+                errors += [0 - error_cal( inputs , targets , model , batch_size )]
 
             fitness = fitness_cal(errors)
-            print(errors)
-            print(fitness)
             fitness , network_weights = kill(fitness,network_weights)
-            print(fitness)
             network_weights = breed(fitness,network_weights)
-            input()
             total_epochs += 1
+            print(network_weights)
+            print("errors: " + str(np.sort(errors)))
+            print("epochs: " + str(total_epochs) )
         return
 
 main = main()
