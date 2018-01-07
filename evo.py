@@ -7,7 +7,7 @@ def split( old_weights , new_size ):
     for loop in range(new_size-1):
         new_weights += [old_weights]
 
-    new_weights = mutation(new_weights,1,1)
+    new_weights = mutation(new_weights,1,4)
 
     new_weights += [old_weights]
     return new_weights
@@ -18,13 +18,13 @@ def mutation( weights , mutation_rate , mutation_amount ):
 
         if mutation_rate >= random.randint(0,100)/100:
 
-            amount = random.randint(-15000,15000)/10000
+            amount = random.randint(-10000,10000)/(10**mutation_amount)
             weights = weights + amount
     else:
         weights = list(map(lambda x: mutation(x,mutation_rate,mutation_amount) , weights ))
 
 
-    return weights # adding mutation_amount
+    return weights
 
 def fitness_cal( error ):
 
@@ -71,18 +71,21 @@ def breed( selection_chance , old_weights ):
         temp_chance = temp_chance / np.sum(temp_chance)
         
         
-        new_DNA = DNA_1
-        # pick elemnt one by one from each
-        for loop2 in range( len( DNA_1 ) ):
-            for loop3 in range( len( DNA_1[loop2] ) ):
-                for loop4 in range( len( DNA_1[loop2][loop3] ) ):
+        new_weights += [join_weights( [DNA_1,DNA_2] , temp_chance )]
 
-                    temp  = np.random.choice( [0,1] , p=temp_chance )
-                    if temp == 0:
-                        new_DNA[loop2][loop3][loop4] = DNA_1[loop2][loop3][loop4]
-                    else:
-                        new_DNA[loop2][loop3][loop4] = DNA_2[loop2][loop3][loop4]
-
-        
-        new_weights += [mutation(new_DNA,0.8,1)]
+    new_weights = mutation( new_weights , 0.8 , 5 )
     return new_weights #remake
+
+def join_weights( DNA , chance_array ):
+    DNA_1 = DNA[0]
+    DNA_2 = DNA[1]
+
+    if type(DNA_1) is np.float32 or type(DNA_1) is int or type(DNA_1) is float or type(DNA_1) is np.float64:
+        if np.random.choice( [True,False] , p=chance_array ):
+            weights = DNA_1
+        else:
+            weights = DNA_2
+    else:
+        weights = list(map( lambda X: join_weights( [DNA_2[X],DNA_1[X]] , chance_array ) , list(range(len(DNA_1))) ))
+
+    return weights

@@ -95,7 +95,7 @@ class main(object):
         else:
             test  = data[training_size:]
     
-        return train , test#split data in to testing and training
+        return train , test
 
     def save_graph(self, model , batch_size , inputs , targets , epoch):
         file = open( "graphs\\graph" + str(epoch) + ".csv","w")
@@ -141,7 +141,7 @@ class main(object):
         
         address_dataset = "info\\data-sets\\example dataset\\"
     
-        num_networks = 20
+        num_networks = 40
         dataset_name = "dataset"
     
         inputs , targets , input_shape , output_shape , structre_array , batch_size = self.load_data_set(address_dataset)
@@ -171,12 +171,14 @@ class main(object):
 
             fitness , network_weights = kill(fitness,network_weights)
 
-            network_weights = breed(fitness,network_weights)
+            network_weights = breed( fitness , network_weights )
 
             total_epochs += 1
+            print(network_weights)
             print("errors: " + str(np.sort(np.abs(errors))))
             print("time taken: " + str(time.time() - mark_start) )
             print("epochs: " + str(total_epochs) )
+            print("")
         return
 
 if __name__ == "__main__":
