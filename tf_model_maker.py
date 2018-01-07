@@ -74,12 +74,12 @@ def model_maker( input_shape , structre_array , batch_size=20 , lr=0.01 , tensor
     #to pick the optimizer to use to learn the task
     if optimizer == "adam":
         model_ID += "adam"
-        network = tflearn.regression( network , optimizer='adam' , learning_rate=lr , batch_size = batch_size , loss='mean_square' , name='target' )
+        network = tflearn.regression( network , optimizer="adam" , learning_rate=lr , batch_size = batch_size , loss='mean_square' , name='target' )
 
     else:
         model_ID += "sgd"
         sgd = tflearn.SGD(learning_rate = lr, lr_decay = 0.01 , decay_step=50)
-        network = tflearn.regression(network, optimizer=sgd, learning_rate = lr ,batch_size = batch_size,loss='mean_square', name='target')
+        network = tflearn.regression(network, optimizer=sgd, learning_rate=lr , batch_size=batch_size , loss="mean_square", name="target" )
     
     if checkpoint_on:
         model = tflearn.DNN( network , tensorboard_verbose=tensorboard_level , tensorboard_dir='log')
