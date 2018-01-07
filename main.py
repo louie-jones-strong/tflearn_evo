@@ -145,6 +145,7 @@ class main(object):
         dataset_name = "dataset"
     
         inputs , targets , input_shape , output_shape , structre_array , batch_size = self.load_data_set(address_dataset)
+        
         #split data in to testing and training
         train_inputs  , test_inputs  = self.split_data( inputs , split_percentage )
         train_targets , test_targets = self.split_data( targets , split_percentage )
@@ -161,18 +162,23 @@ class main(object):
         total_epochs = 0
         while True:
             errors = []
+            mark_start = time.time()
             for loop in range(num_networks):#loop through each network models
                 model = set_weights( model , len(structre_array) , network_weights[loop] )
                 errors += [0 - error_cal( inputs , targets , model , batch_size )]
 
             fitness = fitness_cal(errors)
+
             fitness , network_weights = kill(fitness,network_weights)
+
             network_weights = breed(fitness,network_weights)
+
             total_epochs += 1
-            print(network_weights)
-            print("errors: " + str(np.sort(errors)))
+            print("errors: " + str(np.sort(np.abs(errors))))
+            print("time taken: " + str(time.time() - mark_start) )
             print("epochs: " + str(total_epochs) )
         return
 
-main = main()
-main.main()
+if __name__ == "__main__":
+    main = main()
+    main.main()

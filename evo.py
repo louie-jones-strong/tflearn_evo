@@ -1,6 +1,7 @@
 import random
 import numpy as np
 
+
 def split(old_weights,new_size):
     new_weights = []
     for loop in range(new_size-1):
@@ -12,6 +13,7 @@ def split(old_weights,new_size):
     return new_weights
 
 def mutation( weights , mutation_rate , mutation_amount ):
+
     if type(weights) is np.float32 or type(weights) is int or type(weights) is float or type(weights) is np.float64:
 
         if mutation_rate >= random.randint(0,100)/100:
@@ -32,7 +34,6 @@ def fitness_cal(error):
         selection_chance = error
 
     selection_chance = list(map(lambda x: x**3, selection_chance))
-
 
     selection_chance = selection_chance / np.amax(selection_chance)
 
