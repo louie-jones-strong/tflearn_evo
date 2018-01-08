@@ -5,6 +5,7 @@ import time
 from tf_model_maker import model_maker , accuracy_cal , run_inputs , train , get_weights , set_weights , error_cal
 from common_code import tag_edit , folder_picker , sound_setup , play_sound
 from evo import *
+import gym
 
 class main(object):
  
@@ -117,6 +118,34 @@ class main(object):
         file.close()
         print("graph saved!")
         return
+
+    def env_error_cal(self, model , batch_size , number_of_matches=1):
+        env = gym.make("CartPole-v1")
+        fitness = 0
+        for loop in range(number_of_matches):
+            board = env.reset()
+            while True:
+
+                #env.render()
+
+                move  = run_inputs( [board] , model , batch_size )
+                move = move[0][0]
+
+                if move < 0.5:
+                    move = 0
+                else:
+                    move = 1
+
+                board , temp , finished , _ = env.step(move)
+                fitness += temp
+
+
+                if finished:
+                    
+                    break
+
+
+        return [fitness]
     
     def setup(self):
         address = os.getcwd() + "\\info\\"
@@ -139,9 +168,10 @@ class main(object):
     def main(self):
         address , split_percentage , sound_on , metrics_on , checkpoints_on , checkpoint_num = self.setup()
         
-        address_dataset = "info\\data-sets\\example dataset\\"
-    
-        num_networks = 40
+        #address_dataset = "info\\data-sets\\example dataset\\"
+        address_dataset = "info\\data-sets\\cartpole\\"
+
+        num_networks = 10
         dataset_name = "dataset"
     
         inputs , targets , input_shape , output_shape , structre_array , batch_size = self.load_data_set(address_dataset)
@@ -155,6 +185,10 @@ class main(object):
         run_ID = dataset_name + "." + model_ID
         os.system("cls") 
 
+        user_input = int(input("epochs: "))
+        model , batch_size = train( train_inputs , train_targets , test_inputs , test_targets , user_input , model , batch_size , run_ID)
+
+
         weights = get_weights( model , len(structre_array) )
 
         network_weights = split( weights , num_networks )
@@ -165,7 +199,7 @@ class main(object):
             mark_start = time.time()
             for loop in range(num_networks):#loop through each network models
                 model = set_weights( model , len(structre_array) , network_weights[loop] )
-                errors += [0 - error_cal( inputs , targets , model , batch_size )]
+                errors += self.env_error_cal( model , batch_size )
 
             fitness = fitness_cal(errors)
 
@@ -174,13 +208,13 @@ class main(object):
             network_weights = breed( fitness , network_weights )
 
             total_epochs += 1
-            print(network_weights)
+            #print(network_weights)
             print("errors: " + str(np.sort(np.abs(errors))))
             print("time taken: " + str(time.time() - mark_start) )
             print("epochs: " + str(total_epochs) )
             print("")
         return
 
-if __name__ == "__main__":
-    main = main()
-    main.main()
+
+main = main()
+main.main()

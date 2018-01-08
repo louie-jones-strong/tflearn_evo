@@ -1,0 +1,9 @@
+length of data set = 297
+image_type = 0
+input shape = 4
+output shape = 1
+batch size = 5000
+number of layers = 2
+conv,maxpool,ann,rnn/number of nodes/transfer fution/ drop out
+ann,8,LeakyReLU,True
+ann,1,LeakyReLU,False
