@@ -186,8 +186,9 @@ class main(object):
         os.system("cls") 
 
         user_input = int(input("epochs: "))
+        mark_start = time.time()
         model , batch_size = train( train_inputs , train_targets , test_inputs , test_targets , user_input , model , batch_size , run_ID)
-
+        mark_start = time.time() - mark_start
 
         weights = get_weights( model , len(structre_array) )
 
@@ -196,12 +197,14 @@ class main(object):
         total_epochs = 0
         while True:
             errors = []
-            mark_start = time.time()
+            mark_time = time.time()
             for loop in range(num_networks):#loop through each network models
                 model = set_weights( model , len(structre_array) , network_weights[loop] )
                 errors += self.env_error_cal( model , batch_size )
 
             fitness = fitness_cal(errors)
+
+            print("fitness: " + str(np.sort(np.abs(fitness))))
 
             fitness , network_weights = kill(fitness,network_weights)
 
@@ -210,7 +213,9 @@ class main(object):
             total_epochs += 1
             #print(network_weights)
             print("errors: " + str(np.sort(np.abs(errors))))
-            print("time taken: " + str(time.time() - mark_start) )
+            print("time taken: " + str(time.time() - mark_time) )
+            mark_start += time.time() - mark_time
+            print("total time taken: " + str(mark_start))
             print("epochs: " + str(total_epochs) )
             print("")
         return
