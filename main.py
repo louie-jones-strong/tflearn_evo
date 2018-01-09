@@ -119,8 +119,10 @@ class main(object):
         print("graph saved!")
         return
 
-    def env_error_cal(self, model , batch_size , number_of_matches=1):
-        env = gym.make("CartPole-v1")
+    def env_error_cal(self, model , batch_size , number_of_matches=1 , env=None):
+        if env ==  None:
+            env = gym.make("CartPole-v1")
+
         fitness = 0
         for loop in range(number_of_matches):
             board = env.reset()
@@ -187,12 +189,14 @@ class main(object):
 
         user_input = int(input("epochs: "))
         mark_start = time.time()
-        model , batch_size = train( train_inputs , train_targets , test_inputs , test_targets , user_input , model , batch_size , run_ID)
+        model , batch_size = train( train_inputs , train_targets , test_inputs , test_targets , user_input , model , batch_size , run_ID , metrics_on=metrics_on )
         mark_start = time.time() - mark_start
 
         weights = get_weights( model , len(structre_array) )
 
         network_weights = split( weights , num_networks )
+
+        env = gym.make("CartPole-v1")
 
         total_epochs = 0
         while True:
@@ -200,7 +204,7 @@ class main(object):
             mark_time = time.time()
             for loop in range(num_networks):#loop through each network models
                 model = set_weights( model , len(structre_array) , network_weights[loop] )
-                errors += self.env_error_cal( model , batch_size )
+                errors += self.env_error_cal( model , batch_size , env=env )
 
             fitness = fitness_cal(errors)
 

@@ -33,11 +33,13 @@ def fitness_cal( error ):
     else:
         selection_chance = error
 
-    selection_chance = list(map(lambda x: x**3, selection_chance))
+    selection_chance = list(map(lambda x: x**5, selection_chance))
 
     selection_chance = selection_chance / np.amax(selection_chance)
 
     selection_chance = selection_chance / np.sum(selection_chance)
+
+    selection_chance = list(map(lambda X: float(X), selection_chance))
 
     return selection_chance
 
@@ -49,8 +51,8 @@ def kill( selection_chance , old_weights ):
 
     for loop in range( int( len(old_weights)/2 ) ):
         temp = np.random.choice(temp_array, p = selection_chance)
-        new_weights += [old_weights[temp]]
-        new_selection_chance += [selection_chance[temp]]
+        new_weights += [ old_weights[temp] ]
+        new_selection_chance += [ selection_chance[temp] ]
     
     new_selection_chance = new_selection_chance / np.sum(new_selection_chance)
     return new_selection_chance , new_weights
@@ -71,9 +73,10 @@ def breed( selection_chance , old_weights ):
         temp_chance = temp_chance / np.sum(temp_chance)
         
         
-        new_weights += [join_weights( [DNA_1,DNA_2] , temp_chance )]
+        temp = join_weights( [DNA_1,DNA_2] , temp_chance )
+        
+        new_weights += [ mutation( temp , 0.8 , 5 ) ]
 
-    new_weights = mutation( new_weights , 0.8 , 5 )
     return new_weights #remake
 
 def join_weights( DNA , chance_array ):
