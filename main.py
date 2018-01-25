@@ -4,7 +4,8 @@ import os
 import time
 from tf_model_maker import model_maker , accuracy_cal , run_inputs , train , get_weights , set_weights , error_cal
 from common_code import tag_edit , folder_picker , sound_setup , play_sound
-from evo import *
+#from evo import *
+import evo
 import gym
 
 class main(object):
@@ -181,7 +182,6 @@ class main(object):
         #split data in to testing and training
         train_inputs  , test_inputs  = self.split_data( inputs , split_percentage )
         train_targets , test_targets = self.split_data( targets , split_percentage )
-
 
         model , model_ID = model_maker( input_shape , structre_array , batch_size=batch_size , lr = 0.001 , tensorboard_level = 0, checkpoint_on=checkpoints_on , checkpoint_num=checkpoint_num)
         run_ID = dataset_name + "." + model_ID

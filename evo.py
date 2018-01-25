@@ -2,9 +2,9 @@ import random
 import numpy as np
 from tf_model_maker import model_maker , run_inputs , get_weights , set_weights
 
-class main(object):
+class evolve_main(object):
 
-    def setup(self, num_of_DNAs=20 ):
+    def setup(self, input_shape , structre_array , batch_size , num_of_DNAs=20 ):
         
         self.model , _ = model_maker( input_shape , structre_array , batch_size=batch_size )
         self.batch_size = batch_size
