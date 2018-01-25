@@ -1,5 +1,33 @@
 import random
 import numpy as np
+from tf_model_maker import model_maker , run_inputs , get_weights , set_weights
+
+class main(object):
+
+    def setup(self, num_of_DNAs=20 ):
+        
+        self.model , _ = model_maker( input_shape , structre_array , batch_size=batch_size )
+        self.batch_size = batch_size
+        self.lenght_of_layers = len(structre_array)
+        
+        old_weights = get_weights( self.model , self.lenght_of_layers )
+        self.network_weights = split( old_weights , num_of_DNAs )
+
+        return
+
+    def move_cal(self, network_num , input ):
+        model = set_weights( self.model , self.lenght_of_layers , self.network_weights[network_num] )
+        output  = run_inputs( [input] , model , self.batch_size )
+        
+        return output
+
+    def evolve(self, fittness ):
+        
+        fitness = fitness_cal( fittness )
+        fitness , network_weights = kill( fitness , self.network_weights )
+        self.network_weights = breed( fitness , network_weights )
+        
+        return
 
 
 def split( old_weights , new_size ):
