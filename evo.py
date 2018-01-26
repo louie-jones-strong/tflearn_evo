@@ -16,6 +16,7 @@ class evolve_main(object):
         return
 
     def move_cal(self, network_num , input ):
+        #think about cheacking to see if you need to load in the weights again if the network number the same
         model = set_weights( self.model , self.lenght_of_layers , self.network_weights[network_num] )
         output  = run_inputs( [input] , model , self.batch_size )
         
